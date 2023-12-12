@@ -1,0 +1,431 @@
+getwd()
+setwd('C:/Users/kubra/OneDrive - Aydin Adnan Menderes University/Belgeler/RFinal/Rfinal')
+data<-read.table("DatasetNA1.txt",header = TRUE)
+
+
+
+numberofobservation <- function(column){
+  score = 0
+  for(x in column){
+    if(is.na(x) == TRUE){
+      score <- score + 0
+    }
+    else{
+      score <- score + 1}
+  }
+  return(score)
+}
+numberofobservation(data$Var3)
+
+
+
+minimum <- function(column){
+  min = Inf
+  for (i in seq_along(column)) {
+    if(is.na(column[i]) == FALSE) {
+      if (column[i] < min){
+        min = column[i]
+      }
+    }
+  }
+  return(min)
+}
+minimum(data$Var2)
+
+maximun <- function(column){
+  na.omit(column)
+  max = column[1]
+  for (i in seq_along(column)) {
+    if(is.na(column[i]) == FALSE) {
+      if (column[i] > max){
+        max = column[i]
+      }
+    }
+  }
+  return(max)
+}
+maximun(data$Var2)
+
+range <- function(column){
+  cat(minimum(column) ,"-" ,maximun(column))
+}
+range(data$Var2)
+
+
+sumfunc <- function(column) {
+  sum = 0
+  for (i in seq_along(column)){
+    if(is.na(column[i]) == FALSE){
+      sum = sum + column[i]
+    }
+  }
+  sum
+}
+sumfunc(data$Var6)
+
+meanfunc <- function(column){
+  my_average = sumfunc(column)/length(na.omit(column)) 
+  my_average
+}
+meanfunc(data$Var1)
+
+
+medianfunc <- function(column, na.rm = FALSE) {
+  a <- length(na.omit(column))
+  b <- sort(na.omit(column))
+  ifelse(a%%2==1,b[(a+1)/2],meanfunc(b[a/2+0:1]))
+}
+medianfunc(data$Var1) 
+
+SumOfSquaresfunc <- function(column){
+  difference <-  column - meanfunc(column) 
+  sum_squares <- sumfunc(difference^2)
+  output <- sum_squares
+  return(output)
+}
+SumOfSquaresfunc(data$Var1)
+
+
+varfunc <- function(column){
+  variance = SumOfSquaresfunc(column)/(length(na.omit(column))-1) 
+  return(variance)
+}
+varfunc(data$Var1)
+
+sdfunc <- function(x){
+  return(sqrt(varfunc(x)))
+}
+sdfunc(data$Var1)
+
+crossprodfunc <- function(x,y){
+  a = t(na.omit(x)) %*% na.omit(y)
+  return(a)
+}
+crossprodfunc(data$Var1,data$Var2)
+
+covfunc <- function(x,y){ 
+  xx <-  na.omit(x) - meanfunc(x) 
+  yy <-  na.omit(y) - meanfunc(y) 
+  if(length(xx)==length(yy)){
+    r = sumfunc(xx*yy)/(length(yy)-1) 
+  }
+  else print("vectors are not the same length")
+  return(r)
+}
+covfunc(data$Var1,data$Var2)
+
+corr <- function(x,y){
+  r = covfunc(x,y)/(sdfunc(x)*sdfunc(y))
+  return(r)
+}
+corr(data$Var1,data$Var2)
+
+
+
+
+
+
+
+data2 = data 
+data2$Gender <- gsub('Female', 1, data2$Gender)
+data2$Gender <- gsub('Male', 2, data2$Gender)
+data2$Gender <- as.numeric(as.character(data2$Gender))
+
+summary(data2$Gender)
+
+
+
+data2$Group <- gsub('Group1', 1, data2$Group)
+data2$Group <- gsub('Group2', 2, data2$Group)
+data2$Group <- gsub('Group3', 3, data2$Group)
+data2$Group <- gsub('Group4', 4, data2$Group)
+data2$Group <- as.numeric(as.character(data2$Group))
+
+
+summary(data2$Group)
+
+
+
+subset1 =  data2[floor(data2$Gender) == 1,]
+subset2 =  data2[floor(data2$Gender) == 2,]
+subsetgroup1 =  data2[floor(data2$Group) == 1,]
+subsetgroup2 =  data2[floor(data2$Group) == 2,]
+subsetgroup3 =  data2[floor(data2$Group) == 3,]
+subsetgroup4 =  data2[floor(data2$Group) == 4,]
+
+
+
+group1byfemale =  subsetgroup1[floor(subsetgroup1$Gender) == 1,]
+group2byfemale =  subsetgroup2[floor(subsetgroup2$Gender) == 1,]
+group3byfemale =  subsetgroup3[floor(subsetgroup3$Gender) == 1,]
+group4byfemale =  subsetgroup4[floor(subsetgroup4$Gender) == 1,]
+
+group1bymale =  subsetgroup1[floor(subsetgroup1$Gender) == 2,]
+group2bymale =  subsetgroup2[floor(subsetgroup2$Gender) == 2,]
+group3bymale =  subsetgroup3[floor(subsetgroup3$Gender) == 2,]
+group4bymale =  subsetgroup4[floor(subsetgroup4$Gender) == 2,]
+
+
+
+
+
+#number of observations only gender and group
+
+numberofobservation(subset1$IdNo)
+numberofobservation(subset2$IdNo)
+
+numberofobservation(subsetgroup1$IdNo)
+numberofobservation(subsetgroup2$IdNo)
+numberofobservation(subsetgroup3$IdNo)
+numberofobservation(subsetgroup4$IdNo)
+
+numberofobservation(group1byfemale$IdNo)
+numberofobservation(group2byfemale$IdNo)
+numberofobservation(group3byfemale$IdNo)
+numberofobservation(group4byfemale$IdNo)
+
+
+numberofobservation(group1bymale$IdNo)
+numberofobservation(group2bymale$IdNo)
+numberofobservation(group3bymale$IdNo)
+numberofobservation(group4bymale$IdNo)
+
+
+
+
+
+
+#only  for gender 
+
+
+
+minimum(subset1$Var1)
+minimum(subset2$Var1)
+
+
+maximun(subset1$Var1)
+maximun(subset2$Var1)
+
+range(subset1$Var1)
+range(subset2$Var1)
+
+
+sumfunc(na.omit(subset1$Var1))
+sumfunc(na.omit(subset2$Var2))
+
+meanfunc(subset1$Var1)
+meanfunc(subset2$Var1)
+
+
+medianfunc(na.omit(subset1$Var1))
+medianfunc(na.omit(subset2$Var1))
+
+SumOfSquaresfunc(na.omit(subset1$Var1))
+SumOfSquaresfunc(na.omit(subset2$Var1))
+
+
+varfunc(na.omit(subset1$Var1))
+varfunc(na.omit(subset2$Var1))
+
+sdfunc(na.omit(subset1$Var1))
+sdfunc(na.omit(subset2$Var1))
+
+
+
+
+#only  for groups
+
+minimum(subsetgroup1$Var1)
+minimum(subsetgroup2$Var1)
+minimum(subsetgroup3$Var1)
+minimum(subsetgroup4$Var1)
+
+
+maximun(subsetgroup1$Var1)
+maximun(subsetgroup2$Var1)
+maximun(subsetgroup3$Var1)
+maximun(subsetgroup4$Var1)
+
+range(subsetgroup1$Var1)
+range(subsetgroup2$Var1)
+range(subsetgroup3$Var1)
+range(subsetgroup4$Var1)
+
+
+
+sumfunc(na.omit(subsetgroup1$Var1))
+sumfunc(na.omit(subsetgroup2$Var1))
+sumfunc(na.omit(subsetgroup3$Var1))
+sumfunc(na.omit(subsetgroup4$Var1))
+
+
+meanfunc(na.omit(subsetgroup1$Var1))
+meanfunc(na.omit(subsetgroup1$Var1))
+meanfunc(na.omit(subsetgroup1$Var1))
+meanfunc(na.omit(subsetgroup1$Var1))
+
+
+medianfunc(na.omit(subsetgroup1$Var1))
+medianfunc(na.omit(subsetgroup2$Var1))
+medianfunc(na.omit(subsetgroup3$Var1))
+medianfunc(na.omit(subsetgroup4$Var1))
+
+
+
+SumOfSquaresfunc(na.omit(subsetgroup1$Var1))
+SumOfSquaresfunc(na.omit(subsetgroup2$Var1))
+SumOfSquaresfunc(na.omit(subsetgroup3$Var1))
+SumOfSquaresfunc(na.omit(subsetgroup4$Var1))
+
+
+varfunc(na.omit(subsetgroup1$Var1))
+varfunc(na.omit(subsetgroup2$Var1))
+varfunc(na.omit(subsetgroup3$Var1))
+varfunc(na.omit(subsetgroup4$Var1))
+
+
+sdfunc(na.omit(subsetgroup1$Var1))
+sdfunc(na.omit(subsetgroup2$Var1))
+sdfunc(na.omit(subsetgroup3$Var1))
+sdfunc(na.omit(subsetgroup4$Var1))
+
+
+
+
+
+
+
+#only factor of gender and group by gender factor combination:
+
+minimum(group1byfemale$Var1)
+
+maximun(group1byfemale$Var1)
+
+range(group1byfemale$Var1)
+
+sumfunc(na.omit(group1byfemale$Var1))
+
+meanfunc(na.omit(group1byfemale$Var1))
+
+medianfunc(na.omit(group1byfemale$Var1))
+
+SumOfSquaresfunc(na.omit(subsetgroup1$Var1))
+
+varfunc(na.omit(group1byfemale$Var1))
+
+sdfunc(na.omit(group1byfemale$Var1))
+
+
+
+
+
+crossprodfunc(na.omit(subset1$Var1),na.omit(subset1$Var2))
+crossprodfunc(na.omit(subset2$Var1),na.omit(subset2$Var2))
+
+
+covfunc(na.omit(subset1$Var1),na.omit(subset1$Var2))
+covfunc(na.omit(subset1$Var1),na.omit(subset1$Var2))
+
+
+corr(na.omit(subset1$Var1),na.omit(subset1$Var2))
+corr(na.omit(subset2$Var1),na.omit(subset2$Var2))
+
+
+
+writescatterplot <- function(data,data1=NULL) {
+  if(is.null(data1)==TRUE){
+    data2=data[,unlist(lapply(data, is.numeric))]
+    plot.new()
+    dev.new()
+    par(mfcol=c(4,4),mai=c(0.5,0.5,0.5,0.3))
+    for(y in 2:length(data2)){
+      plot(0:100,0:100,type="n",xlab="",ylab="")
+      for(x in 1:length(data2[,y])){
+        points(data2[x,y], data2[x,y], col = "red",pch=20)
+      }
+      
+    }
+    for(y in 2:length(data2)){
+      plot(0:100,0:100,type="n",xlab="",ylab="")
+      for(x in 1:length(data2[,y])){
+        points(data2[x,y], data2[x,y+1], col = "red",pch=20)
+      }
+    }
+  }
+  else if(is.null(data1)==FALSE){
+    min1 = minimum(data)
+    min2 = minimum(data1)
+    max1 = maximun(data)
+    max2 = maximun(data1)
+    lmin = min(min1,min2)
+    lmax = max(max1,max2)
+    plot.new()
+    dev.new()
+    par(mfcol=c(1,2),mai=c(0.5,0.5,0.5,0.3))
+    plot(lmin:lmax,lmin:lmax,type="n",xlab="",ylab="")
+    for(x in 1:length(data)){
+      points(data1[x], data[x], col = "red",pch=20)
+    }
+  }
+} 
+
+
+writescatterplot(data$Var1,data$Var2)
+writescatterplot(data)
+
+
+
+
+
+
+
+scaled <- function(column, center = TRUE, scale = TRUE){
+  mylist <- c()
+  for(x in column){
+    if(is.na(x)==TRUE){
+      mylist <- append(mylist,x)
+    }
+    else{
+      sc = x - mean(na.omit(column))
+      sca = sc / sdfunc(column)
+      mylist <- append(mylist,sca)
+    }
+    
+    
+  }
+  print(matrix(mylist,ncol = 1))
+  if(center==TRUE){
+    print("attr(,'scaled:center')")
+    mean = meanfunc(na.omit(column))
+    print(mean)
+  }
+  if(scale == TRUE){
+    print("attr(,'scaled:scale')")
+    sd = sdfunc(na.omit(column))
+    print(sd)
+  }
+}
+scaled(na.omit(data$Var1))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
